@@ -3,24 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attention Recovery Protocol · Digital Intervention</title>
-
 <!--
   ==================================================
-  ATTENTION RECOVERY PROTOCOL - v2.0 (ENGLISH)
+  PROTOCOLO DE ATENCIÓN - v3.0 (English)
   ==================================================
-  Author: Jose Ranero García
+  Autor: Jose Ranero García
   ORCID: 0009-0009-3168-6379
   Copyright: © 2026 Jose Ranero García
-  License: CC BY 4.0
-  DOI: 10.5281/zenodo.19556754
+  Licencia: CC BY 4.0
+  DOI: 10.5281/zenodo.19558671
   Web: https://argira.eus/protocolo-atencion/
   ==================================================
 -->
-
+<title>Attention Recovery Protocol · Digital Intervention</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
 <style>
-/* ========== COMPLETE CSS (same as Spanish version) ========== */
+
+
 :root {
   --bg: #f5f0e8;
   --bg2: #ede8de;
@@ -82,6 +81,11 @@ nav {
   color: var(--muted);
   text-transform: uppercase;
 }
+.nav-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
 .nav-steps {
   display: flex;
   gap: 0.5rem;
@@ -97,6 +101,17 @@ nav {
 }
 .nav-dot.active { background: var(--accent); transform: scale(1.4); }
 .nav-dot.done { background: var(--accent2); }
+.btn-stop-speech {
+  background: none;
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+  font-family: monospace;
+  display: none;
+}
+.btn-stop-speech.visible { display: inline-block; }
 section {
   min-height: 100vh;
   display: flex;
@@ -117,6 +132,20 @@ section:nth-child(even) { background: var(--bg2); }
   opacity: 1;
   transform: translateY(0);
 }
+.btn-listen {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+  font-family: monospace;
+  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.btn-listen:hover { background: var(--accent2); color: white; border-color: var(--accent2); }
 .hero-tag {
   font-family: 'DM Mono', monospace;
   font-size: 0.6rem;
@@ -485,6 +514,9 @@ h2 em { font-style: italic; color: var(--accent); }
   font-size: 0.8rem;
   margin-top: 0.25rem;
 }
+/* Arreglo modal */
+body.modal-open { overflow: hidden; position: fixed; width: 100%; }
+#assessmentModal { overflow-y: auto; }
 @media (max-width: 600px) {
   nav { padding: 1rem 1.5rem; }
   section { padding: 6rem 1.5rem 3rem; }
@@ -498,9 +530,10 @@ h2 em { font-style: italic; color: var(--accent); }
 
 <nav>
   <div class="nav-logo">Digital Intervention Protocol</div>
-  <div style="display: flex; gap: 1rem; align-items: center;">
+  <div class="nav-controls">
     <a href="https://argira.eus/protocolo-atencion/" style="font-family: monospace; font-size: 0.7rem; color: var(--ink2); text-decoration: none;">🇪🇸 Español</a>
-    <a href="https://argira.eus/easy_read/" style="font-family: monospace; font-size: 0.7rem; color: var(--ink2); text-decoration: none;">📖 Easy Read</a>
+    <a href="https://argira.eus/Facil/" style="font-family: monospace; font-size: 0.7rem; color: var(--ink2); text-decoration: none;">📖 Easy Read</a>
+    <button id="globalStopSpeechBtn" class="btn-stop-speech">⏹️ Stop</button>
     <div class="nav-steps">
       <div class="nav-dot active" onclick="scrollToSection(0)" title="Home"></div>
       <div class="nav-dot" onclick="scrollToSection(1)" title="Phase 1"></div>
@@ -524,6 +557,33 @@ h2 em { font-style: italic; color: var(--accent); }
       <span class="label">R = Attention Recovery · F = Added Friction · C = Mechanism Awareness · E = Low-Value Stimuli · V = Exposure Speed</span>
     </div>
     <a href="#s1" class="btn">Start protocol →</a>
+    
+    <!-- AUTOEVALUACIÓN (justo después del botón Start protocol) -->
+    <div class="self-assessment" id="selfAssessment" style="margin-top: 2rem;">
+      <button class="btn btn-ghost" id="openAssessmentBtn">📊 Evaluate my autonomy</button>
+      <div id="assessmentModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; overflow: auto; padding: 2rem;">
+        <div style="max-width: 600px; margin: 2rem auto; background: var(--white); padding: 2rem; border-radius: 12px;">
+          <h3 style="font-family: 'DM Serif Display', serif;">Self-Assessment: Your Attention Autonomy</h3>
+          <p>Answer honestly (1 = strongly disagree, 5 = strongly agree). Save results before starting the protocol and again after 14+ days to see your progress.</p>
+          <form id="assessmentForm">
+            <div id="questionsContainer"></div>
+            <div style="margin: 1.5rem 0;">
+              <label><input type="radio" name="assessmentType" value="pre" checked> Before the protocol (pre)</label><br>
+              <label><input type="radio" name="assessmentType" value="post"> After using the protocol (post)</label>
+            </div>
+            <button type="submit" class="btn" style="margin-right: 1rem;">Save assessment</button>
+            <button type="button" id="closeAssessmentBtn" class="btn-ghost">Cancel</button>
+          </form>
+          <div id="assessmentResults" style="margin-top: 2rem; display: none;">
+            <h4>Your progress</h4>
+            <div id="resultsText"></div>
+            <button id="exportResultsBtn" class="btn-ghost" style="margin-top: 1rem;">📁 Export results (JSON)</button>
+            <button id="clearResultsBtn" class="btn-ghost" style="margin-top: 1rem; margin-left: 0.5rem;">🗑️ Delete all results</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin autoevaluación -->
   </div>
 </section>
 
@@ -533,29 +593,36 @@ h2 em { font-style: italic; color: var(--accent); }
     <div class="phase-num">Phase 01 of 04</div>
     <h2>Intervention in<br>the <em>Environment</em></h2>
     <p class="phase-intro">The digital system is designed so your willpower arrives late. The solution isn't more willpower — it's adding friction where design seeks fluidity.</p>
+    <button class="btn-listen" data-section="s1">🔊 Listen to this phase</button>
     <div class="science">
       <p>The human brain has an <strong>involuntary attention system</strong> (salient network) that automatically responds to bright, moving, and loud stimuli before consciousness can veto them. Notifications and saturated colors exploit exactly this system. Adding friction — extra steps, grayscale, silence — gives the <strong>prefrontal lobe</strong> time to regain control.</p>
     </div>
     <div class="steps" id="steps1">
+      <!-- 1. Eliminate Triggers (notificaciones) -->
       <div class="step" data-step-id="1.1" onclick="toggleStep(this)">
-        <div class="step-check">✓</div>
-        <div class="step-content">
-          <h4>Grayscale Mode</h4>
-          <p>Set your screen to black and white. Eliminate the predictive value of bright colors that trigger phasic dopamine. The system becomes visually inert. <em>iOS: Settings → Accessibility → Display & Text Size → Color Filters.</em></p>
-        </div>
-      </div>
-      <div class="step" data-step-id="1.2" onclick="toggleStep(this)">
         <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Eliminate Triggers</h4>
           <p>Disable all non-human notifications. Every "push" is an execution command that hijacks your attention before you can veto it. Only calls and direct messages from real people.</p>
         </div>
       </div>
-      <div class="step" data-step-id="1.3" onclick="toggleStep(this)">
+      <!-- 2. Physical Barriers -->
+      <div class="step" data-step-id="1.2" onclick="toggleStep(this)">
         <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Physical Barriers</h4>
           <p>Phone outside the bedroom during periods of cognitive depth. If the object is in sight, your brain reserves resources to ignore it — exhausting you even without using it. The mere presence of the device reduces cognitive performance.</p>
+        </div>
+      </div>
+      <!-- 3. Reduce bright colors (antes era grayscale) -->
+      <div class="step" data-step-id="1.3" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
+        <div class="step-content">
+          <h4>Reduce bright colors on screen</h4>
+          <p>Bright colors grab your attention. Try these options (choose one):<br>
+          - Lower screen brightness.<br>
+          - Turn on "Night mode" or "Reading mode".<br>
+          - <strong>Advanced:</strong> If you know how, enable grayscale (Settings → Accessibility → Display & Text Size → Color Filters).</p>
         </div>
       </div>
     </div>
@@ -578,6 +645,7 @@ h2 em { font-style: italic; color: var(--accent); }
     <div class="phase-num">Phase 02 of 04</div>
     <h2>Biological<br><em>Stabilization</em></h2>
     <p class="phase-intro">When the system is saturated, dopamine receptors "hide" to protect themselves from overstimulation. To recover them, you need to reduce noise — not add more signal.</p>
+    <button class="btn-listen" data-section="s2">🔊 Listen to this phase</button>
     <div class="science">
       <p><strong>Dopaminergic downregulation</strong> occurs when D2 receptors reduce their density in response to chronic overstimulation. The brain cannot distinguish between real dopamine (achievement, connection) and artificial dopamine (scrolling, likes). The result: you need more stimulus to feel the same. The solution is a <strong>selective dopamine fast</strong> — not eliminating all stimulation, but eliminating low-value, high-frequency stimulation.</p>
     </div>
@@ -623,6 +691,7 @@ h2 em { font-style: italic; color: var(--accent); }
     <div class="phase-num">Phase 03 of 04</div>
     <h2>The <em>Conscious</em><br>Veto</h2>
     <p class="phase-intro">You can't stop the impulse. But you can create a space between impulse and action. That space is where freedom lives.</p>
+    <button class="btn-listen" data-section="s3">🔊 Listen to this phase</button>
     <div class="science">
       <p>Benjamin Libet demonstrated that the brain generates a movement signal <strong>300-500ms before</strong> we become conscious of wanting to move. But he also found something critical: there is a <strong>conscious veto window</strong> in the last 200ms. You can't prevent the impulse from appearing. You can veto it. The 5-Second Protocol is exactly that expanded window.</p>
     </div>
@@ -669,6 +738,7 @@ h2 em { font-style: italic; color: var(--accent); }
     <div class="phase-num">Phase 04 of 04</div>
     <h2>Replacing<br>the <em>Metric</em></h2>
     <p class="phase-intro">The phone as an environment to "inhabit" — a place to "be" — is the design that causes the most harm. The solution is to turn it into an execution tool: enter with a task, exit when completed.</p>
+    <button class="btn-listen" data-section="s4">🔊 Listen to this phase</button>
     <div class="science">
       <p>The brain operates with <strong>goal-directed reward systems</strong> and <strong>habit-based systems</strong>. Digital platforms are designed to move behavior from the first system to the second — from choice to automatism. Defining a task before entering activates the goal-directed system and keeps it in control during the session, preventing the habit from taking over.</p>
     </div>
@@ -714,6 +784,7 @@ h2 em { font-style: italic; color: var(--accent); }
     <div class="phase-num">The Formula</div>
     <h2>R = (F × C)<br><em>− (E × V)</em></h2>
     <p class="phase-intro">Every action of the protocol acts on one variable of this equation. It's not a metaphor — it's the real structure of the problem and its solution.</p>
+    <button class="btn-listen" data-section="s5">🔊 Listen to this section</button>
     <div class="formula-block">
       <div class="formula-eq"><span class="var">R</span> <span class="op">=</span> <span>(</span><span class="var">F</span> <span class="op">×</span> <span class="var">C</span><span>)</span> <span class="op">−</span> <span>(</span><span class="var">E</span> <span class="op">×</span> <span class="var">V</span><span>)</span></div>
       <div class="formula-vars">
@@ -737,12 +808,13 @@ h2 em { font-style: italic; color: var(--accent); }
   </div>
 </section>
 
-<!-- ========== CALENDAR + SELF-ASSESSMENT ========== -->
+<!-- ========== CALENDAR + SELF-ASSESSMENT RESULTS (sin el modal, solo resultados) ========== -->
 <section id="s6">
   <div class="section-inner">
     <div class="phase-num">The Calendar</div>
     <h2>30 days to<br>recalibrate the <em>system.</em></h2>
     <p class="phase-intro">The brain needs between 14 and 30 days of reduced stimulation for dopamine receptors to return to baseline levels. Mark each day. The initial feeling of emptiness is the sign that it's working.</p>
+    <button class="btn-listen" data-section="s6">🔊 Listen to this section</button>
 
     <div class="days-tracker">
       <div class="days-label">Mark each completed day — Click to record</div>
@@ -758,32 +830,6 @@ h2 em { font-style: italic; color: var(--accent); }
       <div class="score-text" id="scoreText">Start today. Not tomorrow.</div>
     </div>
 
-    <!-- SELF-ASSESSMENT (no canvas) -->
-    <div class="self-assessment" id="selfAssessment">
-      <button class="btn btn-ghost" id="openAssessmentBtn" style="margin-top: 1rem;">📊 Evaluate my autonomy</button>
-      <div id="assessmentModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; overflow: auto; padding: 2rem;">
-        <div style="max-width: 600px; margin: 2rem auto; background: var(--white); padding: 2rem; border-radius: 12px;">
-          <h3 style="font-family: 'DM Serif Display', serif;">Self-Assessment: Your Attention Autonomy</h3>
-          <p>Answer honestly (1 = strongly disagree, 5 = strongly agree). Save results before starting the protocol and again after 14+ days to see your progress.</p>
-          <form id="assessmentForm">
-            <div id="questionsContainer"></div>
-            <div style="margin: 1.5rem 0;">
-              <label><input type="radio" name="assessmentType" value="pre" checked> Before the protocol (pre)</label><br>
-              <label><input type="radio" name="assessmentType" value="post"> After using the protocol (post)</label>
-            </div>
-            <button type="submit" class="btn" style="margin-right: 1rem;">Save assessment</button>
-            <button type="button" id="closeAssessmentBtn" class="btn-ghost">Cancel</button>
-          </form>
-          <div id="assessmentResults" style="margin-top: 2rem; display: none;">
-            <h4>Your progress</h4>
-            <div id="resultsText"></div>
-            <button id="exportResultsBtn" class="btn-ghost" style="margin-top: 1rem;">📁 Export results (JSON)</button>
-            <button id="clearResultsBtn" class="btn-ghost" style="margin-top: 1rem; margin-left: 0.5rem;">🗑️ Delete all results</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="divider"></div>
     <div class="quote"><p>"It's not about using less technology. It's about you using it — not it using you."</p></div>
     <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:2rem;">
@@ -791,13 +837,13 @@ h2 em { font-style: italic; color: var(--accent); }
       <a href="#s0" class="btn">Back to top ↑</a>
     </div>
     <div style="text-align: center; padding: 2rem 1rem 1rem; font-size: 0.7rem; font-family: 'DM Mono', monospace; color: var(--muted); border-top: 1px solid var(--border); margin-top: 2rem;">
-      © 2026 Jose Ranero García · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" style="color: var(--muted); text-decoration: none;">CC BY 4.0</a> · DOI: <a href="https://doi.org/10.5281/zenodo.19556754" style="color: var(--muted); text-decoration: none;">10.5281/zenodo.19556754</a> · ORCID: 0009-0009-3168-6379
+      © 2026 Jose Ranero García · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" style="color: var(--muted); text-decoration: none;">CC BY 4.0</a> · DOI v3.0: <a href="https://doi.org/10.5281/zenodo.19558671" style="color: var(--muted); text-decoration: none;">10.5281/zenodo.19558671</a> · ORCID: 0009-0009-3168-6379
     </div>
   </div>
 </section>
 
 <script>
-// ========== PROGRESS BAR ==========
+// ========== PROGRESS BAR (throttled) ==========
 let ticking = false;
 window.addEventListener('scroll', () => {
   if (!ticking) {
@@ -1012,18 +1058,27 @@ function showResults(pre, post) {
   }
   resultsDiv.style.display = 'block';
 }
-document.getElementById('openAssessmentBtn')?.addEventListener('click', () => {
-  renderQuestions();
+
+// === MODAL CONTROL CORREGIDO ===
+function openModal() {
   const modal = document.getElementById('assessmentModal');
-  const resultsDiv = document.getElementById('assessmentResults');
-  resultsDiv.style.display = 'none';
   modal.style.display = 'block';
+  document.body.classList.add('modal-open');
+  renderQuestions();
   document.querySelector('input[value="pre"]').checked = true;
   populateForm('pre');
+}
+function closeModal() {
+  const modal = document.getElementById('assessmentModal');
+  modal.style.display = 'none';
+  document.body.classList.remove('modal-open');
+}
+document.getElementById('openAssessmentBtn')?.addEventListener('click', openModal);
+document.getElementById('closeAssessmentBtn')?.addEventListener('click', closeModal);
+document.getElementById('assessmentModal')?.addEventListener('click', (e) => {
+  if (e.target === document.getElementById('assessmentModal')) closeModal();
 });
-document.getElementById('closeAssessmentBtn')?.addEventListener('click', () => {
-  document.getElementById('assessmentModal').style.display = 'none';
-});
+
 document.getElementById('assessmentForm')?.addEventListener('submit', (e) => {
   e.preventDefault();
   const type = document.querySelector('input[name="assessmentType"]:checked').value;
@@ -1038,8 +1093,9 @@ document.getElementById('assessmentForm')?.addEventListener('submit', (e) => {
   saveAssessment(stored);
   alert(`Assessment (${type === 'pre' ? 'before' : 'after'}) saved.`);
   if (stored.pre && stored.post) showResults(stored.pre, stored.post);
-  else document.getElementById('assessmentModal').style.display = 'none';
+  else closeModal();
 });
+
 document.getElementById('exportResultsBtn')?.addEventListener('click', () => {
   const data = loadAssessment();
   const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
@@ -1056,6 +1112,65 @@ document.getElementById('clearResultsBtn')?.addEventListener('click', () => {
     document.getElementById('assessmentResults').style.display = 'none';
     alert('Results deleted.');
   }
+});
+
+// ========== TEXT-TO-SPEECH (Web Speech API) ==========
+let currentUtterance = null;
+function stopSpeech() {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    currentUtterance = null;
+    const stopBtn = document.getElementById('globalStopSpeechBtn');
+    if (stopBtn) stopBtn.classList.remove('visible');
+  }
+}
+function speakText(text, lang = 'en-US') {
+  if (!window.speechSynthesis) {
+    alert('Your browser does not support speech synthesis.');
+    return;
+  }
+  stopSpeech();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+  currentUtterance = utterance;
+  utterance.onend = () => {
+    currentUtterance = null;
+    const stopBtn = document.getElementById('globalStopSpeechBtn');
+    if (stopBtn) stopBtn.classList.remove('visible');
+  };
+  utterance.onerror = () => {
+    currentUtterance = null;
+    const stopBtn = document.getElementById('globalStopSpeechBtn');
+    if (stopBtn) stopBtn.classList.remove('visible');
+  };
+  window.speechSynthesis.speak(utterance);
+  const stopBtn = document.getElementById('globalStopSpeechBtn');
+  if (stopBtn) stopBtn.classList.add('visible');
+}
+function getSectionText(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (!section) return '';
+  const clone = section.cloneNode(true);
+  const unwanted = clone.querySelectorAll('.btn-listen, .step, .option, .btn, .nav-dot, .progress-bar, .btn-stop-speech, .self-assessment');
+  unwanted.forEach(el => el.remove());
+  let text = clone.innerText || clone.textContent;
+  text = text.replace(/\s+/g, ' ').trim();
+  return text;
+}
+document.querySelectorAll('.btn-listen').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const sectionId = btn.getAttribute('data-section');
+    if (sectionId) {
+      const text = getSectionText(sectionId);
+      if (text) speakText(text);
+    }
+  });
+});
+document.getElementById('globalStopSpeechBtn')?.addEventListener('click', () => {
+  stopSpeech();
 });
 
 // ========== INITIALIZATION ==========
