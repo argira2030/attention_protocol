@@ -7,42 +7,20 @@
 
 <!--
   ==================================================
-  ATTENTION RECOVERY PROTOCOL - v1.1 (ENGLISH)
+  ATTENTION RECOVERY PROTOCOL - v2.0 (ENGLISH)
   ==================================================
-  Title: Attention Recovery Protocol: Neuroscience-Based Digital Intervention
   Author: Jose Ranero García
   ORCID: 0009-0009-3168-6379
-  Copyright: © 2025-2026 Jose Ranero García
-  License: Creative Commons Attribution 4.0 International (CC BY 4.0)
-  DOI: 10.5281/zenodo.19554967
-  Repository: https://argira.eus/attention_protocol/
-  Version: v1.1 — Accessibility + voice reader + localStorage persistence
-  Changes:
-    - Full ARIA roles/labels on all interactive elements
-    - Keyboard navigation (Enter/Space) on steps and options
-    - Web Speech API read-aloud button per section
-    - Language switcher (EN ↔ ES) in nav
-    - localStorage: saves checked steps + selected answers + marked days
-    - rAF-throttled scroll progress bar
-    - Skip-to-content link
-    - Focus-visible ring styles
-    - Screen-reader live region for feedback
+  Copyright: © 2026 Jose Ranero García
+  License: CC BY 4.0
+  DOI: 10.5281/zenodo.19556754
+  Web: https://argira.eus/protocolo-atencion/
   ==================================================
 -->
 
-<meta name="citation_title" content="Attention Recovery Protocol: Neuroscience-Based Digital Intervention">
-<meta name="citation_author" content="Ranero García, Jose">
-<meta name="citation_author_orcid" content="0009-0009-3168-6379">
-<meta name="citation_publication_date" content="2026">
-<meta name="citation_doi" content="10.5281/zenodo.19554967">
-<meta name="citation_license" content="https://creativecommons.org/licenses/by/4.0/">
-<meta name="citation_language" content="en">
-
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
 <style>
-/* ========================
-   DESIGN TOKENS
-======================== */
+/* ========== COMPLETE CSS (same as Spanish version) ========== */
 :root {
   --bg: #f5f0e8;
   --bg2: #ede8de;
@@ -54,54 +32,9 @@
   --gold: #b8860b;
   --border: #d5cfc4;
   --white: #fdfaf5;
-  --focus-ring: 3px solid #c0392b;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-
-/* ========================
-   SKIP LINK (accessibility)
-======================== */
-.skip-link {
-  position: absolute;
-  top: -9999px;
-  left: 1rem;
-  z-index: 9999;
-  padding: 0.6rem 1.2rem;
-  background: var(--accent);
-  color: var(--white);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-}
-.skip-link:focus {
-  top: 1rem;
-  outline: var(--focus-ring);
-  outline-offset: 2px;
-}
-
-/* ========================
-   FOCUS VISIBLE (global)
-======================== */
-:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 3px;
-}
-:focus:not(:focus-visible) { outline: none; }
-
-/* ========================
-   LIVE REGION (screen reader)
-======================== */
-#sr-live {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
 body {
   background: var(--bg);
   color: var(--ink);
@@ -109,8 +42,6 @@ body {
   font-weight: 300;
   min-height: 100vh;
 }
-
-/* GRAIN */
 body::before {
   content: '';
   position: fixed;
@@ -120,116 +51,52 @@ body::before {
   z-index: 1000;
   opacity: 0.6;
 }
-
-/* ========================
-   PROGRESS BAR
-======================== */
 .progress-bar {
   position: fixed;
-  top: 0; left: 0;
-  height: 3px;
+  top: 0;
+  left: 0;
+  height: 2px;
   background: var(--accent);
   width: 0%;
+  transition: width 0.3s ease;
   z-index: 999;
-  transition: width 0.1s linear;
 }
-
-/* ========================
-   NAV
-======================== */
 nav {
   position: fixed;
-  top: 0; left: 0; right: 0;
-  padding: 1rem 2rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem 3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(245,240,232,0.93);
-  backdrop-filter: blur(10px);
+  background: rgba(245,240,232,0.92);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
   z-index: 100;
-  gap: 1rem;
 }
-
 .nav-logo {
   font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   letter-spacing: 0.25em;
   color: var(--muted);
   text-transform: uppercase;
-  flex-shrink: 0;
 }
-
-.nav-center {
+.nav-steps {
   display: flex;
-  gap: 0.45rem;
+  gap: 0.5rem;
   align-items: center;
 }
-
 .nav-dot {
-  width: 7px; height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--border);
   transition: all 0.3s;
   cursor: pointer;
-  border: none;
-  padding: 0;
-}
-.nav-dot:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 .nav-dot.active { background: var(--accent); transform: scale(1.4); }
 .nav-dot.done { background: var(--accent2); }
-
-/* NAV CONTROLS (right side) */
-.nav-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-/* Language button */
-.lang-btn {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--ink2);
-  padding: 0.35rem 0.65rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-.lang-btn:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
-
-/* Global read button */
-.read-global-btn {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 0.35rem 0.65rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-.read-global-btn:hover { border-color: var(--accent); color: var(--accent); }
-.read-global-btn.speaking { background: var(--accent); color: var(--white); border-color: var(--accent); }
-
-/* ========================
-   SECTIONS
-======================== */
 section {
   min-height: 100vh;
   display: flex;
@@ -238,41 +105,18 @@ section {
   position: relative;
 }
 section:nth-child(even) { background: var(--bg2); }
-
 .section-inner {
   max-width: 780px;
   margin: 0 auto;
   width: 100%;
   opacity: 0;
   transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.16,1,0.3,1);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.section-inner.visible { opacity: 1; transform: translateY(0); }
-
-/* Per-section read button */
-.section-read-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 1.5rem;
-  padding: 0.4rem 0.9rem;
-  background: transparent;
-  border: 1px solid var(--border);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.2s;
+.section-inner.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
-.section-read-btn:hover { border-color: var(--accent); color: var(--accent); }
-.section-read-btn.speaking { background: var(--accent); color: var(--white); border-color: var(--accent); }
-.section-read-btn svg { width: 10px; height: 10px; flex-shrink: 0; }
-
-/* ========================
-   HERO
-======================== */
 .hero-tag {
   font-family: 'DM Mono', monospace;
   font-size: 0.6rem;
@@ -287,12 +131,13 @@ section:nth-child(even) { background: var(--bg2); }
 .hero-tag::before {
   content: '';
   display: block;
-  width: 2.5rem; height: 1px;
+  width: 2.5rem;
+  height: 1px;
   background: var(--accent);
 }
 h1 {
   font-family: 'DM Serif Display', serif;
-  font-size: clamp(2.5rem,6vw,4.5rem);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   line-height: 1.1;
   font-weight: 400;
   margin-bottom: 2rem;
@@ -316,12 +161,17 @@ h1 em { font-style: italic; color: var(--accent); }
   line-height: 2;
   color: var(--ink2);
 }
-.hero-formula .eq { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
-.hero-formula .label { color: var(--muted); font-size: 0.72rem; display: block; margin-top: 0.25rem; }
-
-/* ========================
-   BUTTONS
-======================== */
+.hero-formula .eq {
+  font-size: 1.1rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+.hero-formula .label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  display: block;
+  margin-top: 0.25rem;
+}
 .btn {
   display: inline-flex;
   align-items: center;
@@ -346,10 +196,6 @@ h1 em { font-style: italic; color: var(--accent); }
   border: 1px solid var(--border);
 }
 .btn-ghost:hover { background: var(--ink); color: var(--white); }
-
-/* ========================
-   PHASE HEADERS
-======================== */
 .phase-num {
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem;
@@ -360,7 +206,7 @@ h1 em { font-style: italic; color: var(--accent); }
 }
 h2 {
   font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.8rem,4vw,2.8rem);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
   font-weight: 400;
   line-height: 1.2;
   margin-bottom: 1rem;
@@ -374,10 +220,6 @@ h2 em { font-style: italic; color: var(--accent); }
   margin-bottom: 2rem;
   max-width: 580px;
 }
-
-/* ========================
-   SCIENCE BOX
-======================== */
 .science {
   padding: 1.25rem 1.5rem;
   background: var(--white);
@@ -388,7 +230,8 @@ h2 em { font-style: italic; color: var(--accent); }
 .science::before {
   content: 'SCIENCE';
   position: absolute;
-  top: -0.6rem; left: 1rem;
+  top: -0.6rem;
+  left: 1rem;
   background: var(--white);
   padding: 0 0.5rem;
   font-family: 'DM Mono', monospace;
@@ -396,14 +239,18 @@ h2 em { font-style: italic; color: var(--accent); }
   letter-spacing: 0.25em;
   color: var(--gold);
 }
-.science p { font-size: 0.88rem; line-height: 1.75; color: var(--ink2); }
+.science p {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--ink2);
+}
 .science strong { color: var(--ink); font-weight: 400; }
-
-/* ========================
-   STEPS — accessible
-======================== */
-.steps { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
-
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
 .step {
   display: flex;
   gap: 1.25rem;
@@ -413,19 +260,13 @@ h2 em { font-style: italic; color: var(--accent); }
   transition: all 0.3s;
   cursor: pointer;
   align-items: flex-start;
-  /* keyboard accessible */
-  position: relative;
+  border-radius: 8px;
 }
 .step:hover { border-color: var(--accent); transform: translateX(4px); }
-.step:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 0px;
-  border-color: var(--accent);
-}
 .step.checked { border-color: var(--accent2); opacity: 0.7; }
-
 .step-check {
-  width: 20px; height: 20px;
+  width: 20px;
+  height: 20px;
   border: 1px solid var(--border);
   border-radius: 50%;
   flex-shrink: 0;
@@ -434,15 +275,13 @@ h2 em { font-style: italic; color: var(--accent); }
   align-items: center;
   justify-content: center;
   font-size: 0.7rem;
-  color: transparent;
+  color: var(--white);
   background: transparent;
   transition: all 0.3s;
-  pointer-events: none;
 }
 .step.checked .step-check {
   background: var(--accent2);
   border-color: var(--accent2);
-  color: var(--white);
 }
 .step-content h4 {
   font-family: 'DM Serif Display', serif;
@@ -451,12 +290,14 @@ h2 em { font-style: italic; color: var(--accent); }
   margin-bottom: 0.4rem;
   color: var(--ink);
 }
-.step-content p { font-size: 0.82rem; line-height: 1.65; color: var(--ink2); }
-
-/* ========================
-   QUESTIONS / OPTIONS
-======================== */
-.question-block { margin-bottom: 2rem; }
+.step-content p {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--ink2);
+}
+.question-block {
+  margin-bottom: 2rem;
+}
 .question-text {
   font-family: 'DM Serif Display', serif;
   font-size: 1.3rem;
@@ -465,8 +306,11 @@ h2 em { font-style: italic; color: var(--accent); }
   margin-bottom: 1.25rem;
   color: var(--ink);
 }
-.options { display: flex; flex-direction: column; gap: 0.6rem; }
-
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
 .option {
   padding: 0.9rem 1.25rem;
   background: var(--white);
@@ -477,12 +321,11 @@ h2 em { font-style: italic; color: var(--accent); }
   transition: all 0.2s;
   text-align: left;
   font-family: 'DM Sans', sans-serif;
+  border-radius: 40px;
 }
 .option:hover { border-color: var(--accent); color: var(--ink); }
 .option.selected { border-color: var(--accent2); background: var(--accent2); color: var(--white); }
 .option.correct { border-color: var(--gold); background: #f8f4e8; color: var(--ink); }
-.option:focus-visible { outline: var(--focus-ring); outline-offset: 0; }
-
 .answer-reveal {
   margin-top: 1rem;
   padding: 1rem 1.25rem;
@@ -494,27 +337,34 @@ h2 em { font-style: italic; color: var(--accent); }
   display: none;
 }
 .answer-reveal.show { display: block; }
-
-/* ========================
-   FORMULA
-======================== */
 .formula-block {
   padding: 2rem;
   background: var(--white);
   border: 1px solid var(--border);
   margin-bottom: 1.5rem;
+  border-radius: 12px;
 }
 .formula-eq {
   font-family: 'DM Mono', monospace;
-  font-size: clamp(0.8rem,2.5vw,1.1rem);
+  font-size: clamp(0.8rem, 2.5vw, 1.1rem);
   color: var(--ink);
   margin-bottom: 1.5rem;
   line-height: 2;
 }
 .formula-eq .var { color: var(--accent); }
 .formula-eq .op { color: var(--muted); margin: 0 0.5rem; }
-.formula-vars { display: flex; flex-direction: column; gap: 0.75rem; }
-.formula-var { display: flex; gap: 1rem; align-items: flex-start; font-size: 0.82rem; line-height: 1.6; }
+.formula-vars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.formula-var {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
 .var-name {
   font-family: 'DM Mono', monospace;
   color: var(--accent);
@@ -523,11 +373,9 @@ h2 em { font-style: italic; color: var(--accent); }
   font-size: 0.9rem;
 }
 .var-desc { color: var(--ink2); }
-
-/* ========================
-   DAYS TRACKER
-======================== */
-.days-tracker { margin: 2rem 0; }
+.days-tracker {
+  margin: 2rem 0;
+}
 .days-label {
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem;
@@ -540,7 +388,6 @@ h2 em { font-style: italic; color: var(--accent); }
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: 6px;
-  role: group;
 }
 .day-cell {
   aspect-ratio: 1;
@@ -554,14 +401,12 @@ h2 em { font-style: italic; color: var(--accent); }
   font-family: 'DM Mono', monospace;
   font-size: 0.55rem;
   color: var(--muted);
-  position: relative;
+  border-radius: 4px;
 }
 .day-cell:hover { border-color: var(--accent); }
-.day-cell:focus-visible { outline: var(--focus-ring); outline-offset: 0; }
 .day-cell.marked { background: var(--accent2); border-color: var(--accent2); color: var(--white); }
 .day-cell.milestone { border-color: var(--gold); }
 .day-cell.milestone.marked { background: var(--gold); border-color: var(--gold); }
-
 .milestone-label {
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem;
@@ -570,16 +415,13 @@ h2 em { font-style: italic; color: var(--accent); }
   display: none;
 }
 .milestone-label.show { display: block; }
-
-/* ========================
-   SCORE
-======================== */
 .score-display {
   padding: 2rem;
   background: var(--ink);
   color: var(--white);
   text-align: center;
   margin: 2rem 0;
+  border-radius: 16px;
 }
 .score-num {
   font-family: 'DM Serif Display', serif;
@@ -595,12 +437,17 @@ h2 em { font-style: italic; color: var(--accent); }
   color: var(--muted);
   text-transform: uppercase;
 }
-.score-text { margin-top: 1rem; font-size: 0.9rem; color: #b0b0b0; line-height: 1.6; }
-
-/* ========================
-   QUOTE
-======================== */
-.quote { padding: 2rem; border-left: 3px solid var(--accent); margin: 2rem 0; }
+.score-text {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #b0b0b0;
+  line-height: 1.6;
+}
+.quote {
+  padding: 2rem;
+  border-left: 3px solid var(--accent);
+  margin: 2rem 0;
+}
 .quote p {
   font-family: 'DM Serif Display', serif;
   font-size: 1.3rem;
@@ -608,829 +455,613 @@ h2 em { font-style: italic; color: var(--accent); }
   line-height: 1.6;
   color: var(--ink);
 }
-
-.divider { width: 3rem; height: 1px; background: var(--border); margin: 2rem 0; }
-
-/* ========================
-   SPEECH NOT SUPPORTED MSG
-======================== */
-.speech-unavailable {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--muted);
-  margin-bottom: 1.5rem;
-  display: none;
+.divider {
+  width: 3rem;
+  height: 1px;
+  background: var(--border);
+  margin: 2rem 0;
 }
-
-/* ========================
-   RESPONSIVE
-======================== */
+.progress-bar-simple {
+  background: var(--border);
+  border-radius: 4px;
+  height: 8px;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+.progress-fill {
+  background: var(--accent2);
+  height: 8px;
+  border-radius: 4px;
+  width: 0%;
+}
+.result-item {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+.result-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
 @media (max-width: 600px) {
-  nav { padding: 0.85rem 1.25rem; }
-  .nav-logo { display: none; }
+  nav { padding: 1rem 1.5rem; }
   section { padding: 6rem 1.5rem 3rem; }
-  .days-grid { grid-template-columns: repeat(6, 1fr); }
-}
-@media (max-width: 400px) {
-  .nav-controls { gap: 0.3rem; }
-  .lang-btn, .read-global-btn { font-size: 0.55rem; padding: 0.3rem 0.5rem; }
+  .days-grid { grid-template-columns: repeat(7, 1fr); }
 }
 </style>
 </head>
 <body>
 
-<!-- SKIP LINK -->
-<a class="skip-link" href="#main-content">Skip to main content</a>
+<div class="progress-bar" id="progressBar"></div>
 
-<!-- Screen-reader live region -->
-<div id="sr-live" aria-live="polite" aria-atomic="true"></div>
-
-<!-- PROGRESS BAR -->
-<div class="progress-bar" id="progressBar" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-
-<!-- NAV -->
-<nav aria-label="Section navigation">
+<nav>
   <div class="nav-logo">Digital Intervention Protocol</div>
-
-  <div class="nav-center" role="group" aria-label="Jump to section">
-    <button class="nav-dot active" onclick="scrollToSection(0)" aria-label="Home" title="Home"></button>
-    <button class="nav-dot" onclick="scrollToSection(1)" aria-label="Phase 1: Environment" title="Phase 1"></button>
-    <button class="nav-dot" onclick="scrollToSection(2)" aria-label="Phase 2: Biological Stabilization" title="Phase 2"></button>
-    <button class="nav-dot" onclick="scrollToSection(3)" aria-label="Phase 3: Conscious Veto" title="Phase 3"></button>
-    <button class="nav-dot" onclick="scrollToSection(4)" aria-label="Phase 4: Replace the Metric" title="Phase 4"></button>
-    <button class="nav-dot" onclick="scrollToSection(5)" aria-label="The Formula" title="Formula"></button>
-    <button class="nav-dot" onclick="scrollToSection(6)" aria-label="30-Day Calendar" title="30 Days"></button>
-  </div>
-
-  <div class="nav-controls">
-    <!-- Language switcher -->
-    <a href="https://argira.eus/protocolo-atencion/" class="lang-btn" aria-label="Switch to Spanish version" title="Ver en español">
-      <span aria-hidden="true">🌐</span> ES
-    </a>
-    <!-- Global stop-speech button (only shown while speaking) -->
-    <button class="read-global-btn" id="globalStopBtn" onclick="stopSpeech()" style="display:none" aria-label="Stop reading aloud">
-      <span aria-hidden="true">⏹</span> Stop
-    </button>
+  <div style="display: flex; gap: 1rem; align-items: center;">
+    <a href="https://argira.eus/protocolo-atencion/" style="font-family: monospace; font-size: 0.7rem; color: var(--ink2); text-decoration: none;">🇪🇸 Español</a>
+    <a href="easy_read.html" style="font-family: monospace; font-size: 0.7rem; color: var(--ink2); text-decoration: none;">📖 Easy Read</a>
+    <div class="nav-steps">
+      <div class="nav-dot active" onclick="scrollToSection(0)" title="Home"></div>
+      <div class="nav-dot" onclick="scrollToSection(1)" title="Phase 1"></div>
+      <div class="nav-dot" onclick="scrollToSection(2)" title="Phase 2"></div>
+      <div class="nav-dot" onclick="scrollToSection(3)" title="Phase 3"></div>
+      <div class="nav-dot" onclick="scrollToSection(4)" title="Phase 4"></div>
+      <div class="nav-dot" onclick="scrollToSection(5)" title="The Formula"></div>
+      <div class="nav-dot" onclick="scrollToSection(6)" title="30 Days"></div>
+    </div>
   </div>
 </nav>
 
-<!-- MAIN -->
-<main id="main-content">
-
-<!-- ======================== HERO ======================== -->
-<section id="s0" aria-labelledby="hero-heading">
+<!-- ========== HERO ========== -->
+<section id="s0">
   <div class="section-inner">
-
-    <button class="section-read-btn" onclick="readSection('s0')" aria-label="Read this section aloud">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      Listen
-    </button>
-
-    <div class="hero-tag" aria-label="Protocol · Intervention · Digital">Protocol · Intervention · Digital</div>
-    <h1 id="hero-heading">The system is<br>calibrated for<br>you to <em>fail.</em></h1>
-    <p class="hero-sub">
-      It's not lack of willpower. It's engineering. This program gives you the scientific tools to regain control of your attention — step by step, with the neuroscience behind every action.
-    </p>
-    <div class="hero-formula" role="note" aria-label="Core formula: R equals F times C, minus E times V">
+    <div class="hero-tag">Protocol · Intervention · Digital</div>
+    <h1>The system is<br>calibrated for<br>you to <em>fail.</em></h1>
+    <p class="hero-sub">It's not lack of willpower. It's engineering. This program gives you the scientific tools to regain control of your attention — step by step, with the neuroscience behind every action.</p>
+    <div class="hero-formula">
       <div class="eq">R = (F × C) − (E × V)</div>
       <span class="label">R = Attention Recovery · F = Added Friction · C = Mechanism Awareness · E = Low-Value Stimuli · V = Exposure Speed</span>
     </div>
-    <a href="#s1" class="btn" aria-label="Start the protocol, go to Phase 1">Start protocol →</a>
+    <a href="#s1" class="btn">Start protocol →</a>
   </div>
 </section>
 
-<!-- ======================== PHASE 1 ======================== -->
-<section id="s1" aria-labelledby="s1-heading">
+<!-- ========== PHASE 1 ========== -->
+<section id="s1">
   <div class="section-inner">
-
-    <button class="section-read-btn" onclick="readSection('s1')" aria-label="Read this section aloud">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      Listen
-    </button>
-
-    <div class="phase-num" aria-hidden="true">Phase 01 of 04</div>
-    <h2 id="s1-heading">Intervention in<br>the <em>Environment</em></h2>
-    <p class="phase-intro">
-      The digital system is designed so your willpower arrives late. The solution isn't more willpower — it's adding friction where design seeks fluidity.
-    </p>
-
-    <div class="science" role="note" aria-label="Scientific background">
+    <div class="phase-num">Phase 01 of 04</div>
+    <h2>Intervention in<br>the <em>Environment</em></h2>
+    <p class="phase-intro">The digital system is designed so your willpower arrives late. The solution isn't more willpower — it's adding friction where design seeks fluidity.</p>
+    <div class="science">
       <p>The human brain has an <strong>involuntary attention system</strong> (salient network) that automatically responds to bright, moving, and loud stimuli before consciousness can veto them. Notifications and saturated colors exploit exactly this system. Adding friction — extra steps, grayscale, silence — gives the <strong>prefrontal lobe</strong> time to regain control.</p>
     </div>
-
-    <div class="steps" id="steps1" role="group" aria-label="Phase 1 action steps — click or press Enter to mark complete">
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s1-step1"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Grayscale Mode — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+    <div class="steps" id="steps1">
+      <div class="step" data-step-id="1.1" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Grayscale Mode</h4>
           <p>Set your screen to black and white. Eliminate the predictive value of bright colors that trigger phasic dopamine. The system becomes visually inert. <em>iOS: Settings → Accessibility → Display & Text Size → Color Filters.</em></p>
         </div>
       </div>
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s1-step2"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Eliminate Triggers — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+      <div class="step" data-step-id="1.2" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Eliminate Triggers</h4>
           <p>Disable all non-human notifications. Every "push" is an execution command that hijacks your attention before you can veto it. Only calls and direct messages from real people.</p>
         </div>
       </div>
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s1-step3"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Physical Barriers — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+      <div class="step" data-step-id="1.3" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Physical Barriers</h4>
           <p>Phone outside the bedroom during periods of cognitive depth. If the object is in sight, your brain reserves resources to ignore it — exhausting you even without using it. The mere presence of the device reduces cognitive performance.</p>
         </div>
       </div>
     </div>
-
-    <div class="question-block" role="group" aria-labelledby="q1-text">
-      <div class="question-text" id="q1-text">"Why does seeing your phone — even without using it — exhaust you?"</div>
-      <div class="options" role="radiogroup" aria-labelledby="q1-text">
-        <button class="option" onclick="selectOption(this,false,'q1')" aria-label="Option A: Because it generates conscious anxiety" data-opt-id="q1-0">Because it generates conscious anxiety</button>
-        <button class="option" onclick="selectOption(this,true,'q1')" aria-label="Option B: Because the brain uses resources to inhibit the response to the stimulus" data-opt-id="q1-1">Because the brain uses resources to inhibit the response to the stimulus</button>
-        <button class="option" onclick="selectOption(this,false,'q1')" aria-label="Option C: Because the screen emits radiation that tires you" data-opt-id="q1-2">Because the screen emits radiation that tires you</button>
+    <div class="question-block">
+      <div class="question-text">"Why does seeing your phone — even without using it — exhaust you?"</div>
+      <div class="options">
+        <button class="option" onclick="selectOption(this, false, 'q1')">Because it generates conscious anxiety</button>
+        <button class="option" onclick="selectOption(this, true, 'q1')">Because the brain uses resources to inhibit the response to the stimulus</button>
+        <button class="option" onclick="selectOption(this, false, 'q1')">Because the screen emits radiation that tires you</button>
       </div>
-      <div class="answer-reveal" id="q1-reveal" role="alert" aria-live="polite">
-        The phenomenon is called <strong>active cognitive inhibition</strong>. When a salient object is in your visual field, your involuntary attention network generates an orientation impulse. Repeatedly suppressing that impulse consumes glucose and prefrontal lobe resources — exactly the same resource you use for deep thinking.
-      </div>
+      <div class="answer-reveal" id="q1-reveal">The phenomenon is called <strong>active cognitive inhibition</strong>. When a salient object is in your visual field, your involuntary attention network generates an orientation impulse. Repeatedly suppressing that impulse consumes glucose and prefrontal lobe resources — exactly the same resource you use for deep thinking.</div>
     </div>
-
     <a href="#s2" class="btn">Phase 2 →</a>
   </div>
 </section>
 
-<!-- ======================== PHASE 2 ======================== -->
-<section id="s2" aria-labelledby="s2-heading">
+<!-- ========== PHASE 2 ========== -->
+<section id="s2">
   <div class="section-inner">
-
-    <button class="section-read-btn" onclick="readSection('s2')" aria-label="Read this section aloud">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      Listen
-    </button>
-
-    <div class="phase-num" aria-hidden="true">Phase 02 of 04</div>
-    <h2 id="s2-heading">Biological<br><em>Stabilization</em></h2>
-    <p class="phase-intro">
-      When the system is saturated, dopamine receptors "hide" to protect themselves from overstimulation. To recover them, you need to reduce noise — not add more signal.
-    </p>
-
-    <div class="science" role="note" aria-label="Scientific background">
+    <div class="phase-num">Phase 02 of 04</div>
+    <h2>Biological<br><em>Stabilization</em></h2>
+    <p class="phase-intro">When the system is saturated, dopamine receptors "hide" to protect themselves from overstimulation. To recover them, you need to reduce noise — not add more signal.</p>
+    <div class="science">
       <p><strong>Dopaminergic downregulation</strong> occurs when D2 receptors reduce their density in response to chronic overstimulation. The brain cannot distinguish between real dopamine (achievement, connection) and artificial dopamine (scrolling, likes). The result: you need more stimulus to feel the same. The solution is a <strong>selective dopamine fast</strong> — not eliminating all stimulation, but eliminating low-value, high-frequency stimulation.</p>
     </div>
-
-    <div class="steps" id="steps2" role="group" aria-label="Phase 2 action steps">
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s2-step1"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Low-Value Stimuli Fast — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+    <div class="steps" id="steps2">
+      <div class="step" data-step-id="2.1" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Low-Value Stimuli Fast</h4>
           <p>Identify "filler" tasks — infinite scroll, short videos, endless news — and replace them with high-delayed-reward activities: reading on paper, walking without audio, manual tasks. The key is that reward comes after effort.</p>
         </div>
       </div>
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s2-step2"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Exposure to Boredom — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+      <div class="step" data-step-id="2.2" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Exposure to Boredom</h4>
           <p>Boredom is the signal that the system is seeking a value metric. Don't mask it with noise. Allow the system to stabilize in emptiness. Receptors return to the surface when the baseline stimulation level drops. The initial discomfort is the sign that it's working.</p>
         </div>
       </div>
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s2-step3"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Morning Sunlight — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+      <div class="step" data-step-id="2.3" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Morning Sunlight</h4>
           <p>Natural light in the first 30 minutes of the day regulates dopamine synthesis and the circadian cycle, preparing the chemical foundation for the rest of the day. No screens before this exposure — artificial morning light interferes with the cortisol signal.</p>
         </div>
       </div>
     </div>
-
-    <div class="question-block" role="group" aria-labelledby="q2-text">
-      <div class="question-text" id="q2-text">"What does it mean to feel empty when you stop scrolling?"</div>
-      <div class="options" role="radiogroup" aria-labelledby="q2-text">
-        <button class="option" onclick="selectOption(this,false,'q2')" data-opt-id="q2-0">That you are more sensitive than other people</button>
-        <button class="option" onclick="selectOption(this,false,'q2')" data-opt-id="q2-1">That the content was truly important to you</button>
-        <button class="option" onclick="selectOption(this,true,'q2')" data-opt-id="q2-2">That your dopamine receptors are in the process of recalibration</button>
+    <div class="question-block">
+      <div class="question-text">"What does it mean to feel empty when you stop scrolling?"</div>
+      <div class="options">
+        <button class="option" onclick="selectOption(this, false, 'q2')">That you are more sensitive than other people</button>
+        <button class="option" onclick="selectOption(this, false, 'q2')">That the content was truly important to you</button>
+        <button class="option" onclick="selectOption(this, true, 'q2')">That your dopamine receptors are in the process of recalibration</button>
       </div>
-      <div class="answer-reveal" id="q2-reveal" role="alert" aria-live="polite">
-        That emptiness is the most important biological signal of the protocol. It means the baseline stimulation level has dropped and receptors are emerging. <strong>It is not depression or pathological boredom</strong> — it is the nervous system recalibrating its threshold. It lasts between 3 and 14 days depending on prior saturation level. Getting through it without adding noise is the most powerful action of the protocol.
-      </div>
+      <div class="answer-reveal" id="q2-reveal">That emptiness is the most important biological signal of the protocol. It means the baseline stimulation level has dropped and receptors are emerging. <strong>It is not depression or pathological boredom</strong> — it is the nervous system recalibrating its threshold. It lasts between 3 and 14 days depending on prior saturation level. Getting through it without adding noise is the most powerful action of the protocol.</div>
     </div>
-
     <a href="#s3" class="btn">Phase 3 →</a>
   </div>
 </section>
 
-<!-- ======================== PHASE 3 ======================== -->
-<section id="s3" aria-labelledby="s3-heading">
+<!-- ========== PHASE 3 ========== -->
+<section id="s3">
   <div class="section-inner">
-
-    <button class="section-read-btn" onclick="readSection('s3')" aria-label="Read this section aloud">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      Listen
-    </button>
-
-    <div class="phase-num" aria-hidden="true">Phase 03 of 04</div>
-    <h2 id="s3-heading">The <em>Conscious</em><br>Veto</h2>
-    <p class="phase-intro">
-      You can't stop the impulse. But you can create a space between impulse and action. That space is where freedom lives.
-    </p>
-
-    <div class="science" role="note" aria-label="Scientific background">
-      <p>Benjamin Libet demonstrated that the brain generates a movement signal <strong>300–500ms before</strong> we become conscious of wanting to move. But he also found something critical: there is a <strong>conscious veto window</strong> in the last 200ms. You can't prevent the impulse from appearing. You can veto it. The 5-Second Protocol is exactly that expanded window.</p>
+    <div class="phase-num">Phase 03 of 04</div>
+    <h2>The <em>Conscious</em><br>Veto</h2>
+    <p class="phase-intro">You can't stop the impulse. But you can create a space between impulse and action. That space is where freedom lives.</p>
+    <div class="science">
+      <p>Benjamin Libet demonstrated that the brain generates a movement signal <strong>300-500ms before</strong> we become conscious of wanting to move. But he also found something critical: there is a <strong>conscious veto window</strong> in the last 200ms. You can't prevent the impulse from appearing. You can veto it. The 5-Second Protocol is exactly that expanded window.</p>
     </div>
-
-    <div class="quote" role="blockquote">
-      <p>"When you catch yourself opening an app out of habit, don't close it with guilt. Observe the impulse. Keep the app open for 5 seconds without interacting. That space returns control to the frontal lobe."</p>
-    </div>
-
-    <div class="steps" role="group" aria-label="Phase 3 action steps">
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s3-step1"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Step 1: Detect — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+    <div class="quote"><p>"When you catch yourself opening an app out of habit, don't close it with guilt. Observe the impulse. Keep the app open for 5 seconds without interacting. That space returns control to the frontal lobe."</p></div>
+    <div class="steps">
+      <div class="step" data-step-id="3.1" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Step 1 — Detect</h4>
           <p>Notice that you opened the app. Don't judge yourself. Judgment is another stimulus that consumes prefrontal resources. Just observe: "I just opened this without deciding to."</p>
         </div>
       </div>
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s3-step2"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Step 2: 5-Second Pause — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+      <div class="step" data-step-id="3.2" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Step 2 — 5-Second Pause</h4>
           <p>Keep the app open. Don't interact. Count 5 seconds. This activates the ventrolateral prefrontal cortex — the brain's neurological brake — which normally arrives late after the habit has already executed.</p>
         </div>
       </div>
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s3-step3"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Step 3: The Question — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+      <div class="step" data-step-id="3.3" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Step 3 — The Question</h4>
           <p>Is this a decision or an automatic execution? If automatic, close it. If there's a real reason, continue with intention. The difference is not in what you do — it's in whether you chose it.</p>
         </div>
       </div>
     </div>
-
-    <div class="question-block" role="group" aria-labelledby="q3-text">
-      <div class="question-text" id="q3-text">"Why doesn't guilt work as a strategy when closing the app?"</div>
-      <div class="options" role="radiogroup" aria-labelledby="q3-text">
-        <button class="option" onclick="selectOption(this,false,'q3')" data-opt-id="q3-0">Because guilt doesn't really exist</button>
-        <button class="option" onclick="selectOption(this,true,'q3')" data-opt-id="q3-1">Because guilt is an emotional stimulus that depletes the same resource you need for self-control</button>
-        <button class="option" onclick="selectOption(this,false,'q3')" data-opt-id="q3-2">Because the brain doesn't register negative emotions</button>
+    <div class="question-block">
+      <div class="question-text">"Why doesn't guilt work as a strategy when closing the app?"</div>
+      <div class="options">
+        <button class="option" onclick="selectOption(this, false, 'q3')">Because guilt doesn't really exist</button>
+        <button class="option" onclick="selectOption(this, true, 'q3')">Because guilt is an emotional stimulus that depletes the same resource you need for self-control</button>
+        <button class="option" onclick="selectOption(this, false, 'q3')">Because the brain doesn't register negative emotions</button>
       </div>
-      <div class="answer-reveal" id="q3-reveal" role="alert" aria-live="polite">
-        Self-control and emotional regulation share resources in the <strong>prefrontal cortex</strong>. When you use energy feeling bad about failing, you reduce exactly the capacity you need to not fail next time. The correct protocol is <strong>non-judgmental observation</strong> — registering the behavior as data, not as moral failure. That preserves resources and increases the probability of success next time.
-      </div>
+      <div class="answer-reveal" id="q3-reveal">Self-control and emotional regulation share resources in the <strong>prefrontal cortex</strong>. When you use energy feeling bad about failing, you reduce exactly the capacity you need to not fail next time. The correct protocol is <strong>non-judgmental observation</strong> — registering the behavior as data, not as moral failure. That preserves resources and increases the probability of success next time.</div>
     </div>
-
     <a href="#s4" class="btn">Phase 4 →</a>
   </div>
 </section>
 
-<!-- ======================== PHASE 4 ======================== -->
-<section id="s4" aria-labelledby="s4-heading">
+<!-- ========== PHASE 4 ========== -->
+<section id="s4">
   <div class="section-inner">
-
-    <button class="section-read-btn" onclick="readSection('s4')" aria-label="Read this section aloud">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      Listen
-    </button>
-
-    <div class="phase-num" aria-hidden="true">Phase 04 of 04</div>
-    <h2 id="s4-heading">Replacing<br>the <em>Metric</em></h2>
-    <p class="phase-intro">
-      The phone as an environment to "inhabit" — a place to "be" — is the design that causes the most harm. The solution is to turn it into an execution tool: enter with a task, exit when completed.
-    </p>
-
-    <div class="science" role="note" aria-label="Scientific background">
+    <div class="phase-num">Phase 04 of 04</div>
+    <h2>Replacing<br>the <em>Metric</em></h2>
+    <p class="phase-intro">The phone as an environment to "inhabit" — a place to "be" — is the design that causes the most harm. The solution is to turn it into an execution tool: enter with a task, exit when completed.</p>
+    <div class="science">
       <p>The brain operates with <strong>goal-directed reward systems</strong> and <strong>habit-based systems</strong>. Digital platforms are designed to move behavior from the first system to the second — from choice to automatism. Defining a task before entering activates the goal-directed system and keeps it in control during the session, preventing the habit from taking over.</p>
     </div>
-
-    <div class="steps" role="group" aria-label="Phase 4 action steps">
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s4-step1"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Single Prior Task — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+    <div class="steps">
+      <div class="step" data-step-id="4.1" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Single Prior Task</h4>
           <p>Define out loud or in writing what you are going to do before touching the device. "I'm going to reply to Ana's message and close it." Verbalization activates the prefrontal system and creates a cognitive contract with yourself.</p>
         </div>
       </div>
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s4-step2"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="The Device as a Tool — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+      <div class="step" data-step-id="4.2" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>The Device as a Tool</h4>
           <p>Treat the phone like a hammer: you pick it up to drive a nail, you put it down when you've driven it. You don't "inhabit" a hammer. The metaphor changes the cognitive relationship with the object before touching it.</p>
         </div>
       </div>
-
-      <div class="step" role="checkbox" aria-checked="false" tabindex="0"
-           data-step-id="s4-step3"
-           onclick="toggleStep(this)" onkeydown="stepKeydown(event,this)"
-           aria-label="Conscious Closure — mark as done">
-        <div class="step-check" aria-hidden="true">✓</div>
+      <div class="step" data-step-id="4.3" onclick="toggleStep(this)">
+        <div class="step-check">✓</div>
         <div class="step-content">
           <h4>Conscious Closure</h4>
           <p>When you finish the task, actively close it and internally say "completed." This micro-ritual activates the reward system with the real task — not with the scroll that comes after — and reinforces the goal-directed circuit.</p>
         </div>
       </div>
     </div>
-
-    <div class="question-block" role="group" aria-labelledby="q4-text">
-      <div class="question-text" id="q4-text">"What's the difference between using the phone as a tool and as an environment?"</div>
-      <div class="options" role="radiogroup" aria-labelledby="q4-text">
-        <button class="option" onclick="selectOption(this,false,'q4')" data-opt-id="q4-0">Only time — if you use less time, it's a tool</button>
-        <button class="option" onclick="selectOption(this,true,'q4')" data-opt-id="q4-1">Prior intention — if you enter with a goal, it's a tool; if you "inhabit" it, it's an environment</button>
-        <button class="option" onclick="selectOption(this,false,'q4')" data-opt-id="q4-2">The apps you use — social media is environment, everything else is a tool</button>
+    <div class="question-block">
+      <div class="question-text">"What's the difference between using the phone as a tool and as an environment?"</div>
+      <div class="options">
+        <button class="option" onclick="selectOption(this, false, 'q4')">Only time — if you use less time, it's a tool</button>
+        <button class="option" onclick="selectOption(this, true, 'q4')">Prior intention — if you enter with a goal, it's a tool; if you "inhabit" it, it's an environment</button>
+        <button class="option" onclick="selectOption(this, false, 'q4')">The apps you use — social media is environment, everything else is a tool</button>
       </div>
-      <div class="answer-reveal" id="q4-reveal" role="alert" aria-live="polite">
-        The distinction is not time or app — it's <strong>cognitive mode</strong>. You can spend 2 minutes on Instagram in a goal-directed way (you look for something specific, find it, leave) or 2 hours on email in habit mode (you check without reason, without a defined exit). What activates one mode or the other is <strong>prior intention</strong>. Without intention, the habit system takes control within the first 8–15 seconds of the session.
-      </div>
+      <div class="answer-reveal" id="q4-reveal">The distinction is not time or app — it's <strong>cognitive mode</strong>. You can spend 2 minutes on Instagram in a goal-directed way (you look for something specific, find it, leave) or 2 hours on email in habit mode (you check without reason, without a defined exit). What activates one mode or the other is <strong>prior intention</strong>. Without intention, the habit system takes control within the first 8-15 seconds of the session.</div>
     </div>
-
     <a href="#s5" class="btn">See the Formula →</a>
   </div>
 </section>
 
-<!-- ======================== FORMULA ======================== -->
-<section id="s5" aria-labelledby="s5-heading">
+<!-- ========== THE FORMULA ========== -->
+<section id="s5">
   <div class="section-inner">
-
-    <button class="section-read-btn" onclick="readSection('s5')" aria-label="Read this section aloud">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      Listen
-    </button>
-
-    <div class="phase-num" aria-hidden="true">The Formula</div>
-    <h2 id="s5-heading">R = (F × C)<br><em>− (E × V)</em></h2>
-    <p class="phase-intro">
-      Every action of the protocol acts on one variable of this equation. It's not a metaphor — it's the real structure of the problem and its solution.
-    </p>
-
-    <div class="formula-block" role="note" aria-label="Formula breakdown">
-      <div class="formula-eq" aria-label="R equals F times C, minus E times V">
-        <span class="var">R</span> <span class="op">=</span>
-        <span>(</span><span class="var">F</span> <span class="op">×</span> <span class="var">C</span><span>)</span>
-        <span class="op">−</span>
-        <span>(</span><span class="var">E</span> <span class="op">×</span> <span class="var">V</span><span>)</span>
-      </div>
+    <div class="phase-num">The Formula</div>
+    <h2>R = (F × C)<br><em>− (E × V)</em></h2>
+    <p class="phase-intro">Every action of the protocol acts on one variable of this equation. It's not a metaphor — it's the real structure of the problem and its solution.</p>
+    <div class="formula-block">
+      <div class="formula-eq"><span class="var">R</span> <span class="op">=</span> <span>(</span><span class="var">F</span> <span class="op">×</span> <span class="var">C</span><span>)</span> <span class="op">−</span> <span>(</span><span class="var">E</span> <span class="op">×</span> <span class="var">V</span><span>)</span></div>
       <div class="formula-vars">
-        <div class="formula-var">
-          <span class="var-name" aria-hidden="true">R</span>
-          <span class="var-desc"><strong>Attention Recovery.</strong> What we seek. Not perfection — direction. Each point gained in R is one more moment of life that you live, not the algorithm.</span>
-        </div>
-        <div class="formula-var">
-          <span class="var-name" aria-hidden="true">F</span>
-          <span class="var-desc"><strong>Added Friction.</strong> Grayscale, physical barriers, notifications off. Each step of friction you add multiplies your conscious veto capacity.</span>
-        </div>
-        <div class="formula-var">
-          <span class="var-name" aria-hidden="true">C</span>
-          <span class="var-desc"><strong>Mechanism Awareness.</strong> Understanding why it works this way. Not as abstract information — as an active tool. A child who understands that the app is designed to trap them has a defense that no parental control can provide.</span>
-        </div>
-        <div class="formula-var">
-          <span class="var-name" aria-hidden="true">E</span>
-          <span class="var-desc"><strong>Low-Value Stimuli.</strong> Infinite scroll, short videos, endless news. The more you reduce them, the more space you open for high-value ones.</span>
-        </div>
-        <div class="formula-var">
-          <span class="var-name" aria-hidden="true">V</span>
-          <span class="var-desc"><strong>Exposure Speed.</strong> The frequency with which the system throws stimuli at you. Reducing V — fewer sessions, shorter ones — reduces the product E×V that subtracts from your recovery.</span>
-        </div>
+        <div class="formula-var"><span class="var-name">R</span><span class="var-desc"><strong>Attention Recovery.</strong> What we seek. Not perfection — direction. Each point gained in R is one more moment of life that you live, not the algorithm.</span></div>
+        <div class="formula-var"><span class="var-name">F</span><span class="var-desc"><strong>Added Friction.</strong> Grayscale, physical barriers, notifications off. Each step of friction you add multiplies your conscious veto capacity.</span></div>
+        <div class="formula-var"><span class="var-name">C</span><span class="var-desc"><strong>Mechanism Awareness.</strong> Understanding why it works this way. Not as abstract information — as an active tool. A child who understands that the app is designed to trap them has a defense that no parental control can provide.</span></div>
+        <div class="formula-var"><span class="var-name">E</span><span class="var-desc"><strong>Low-Value Stimuli.</strong> Infinite scroll, short videos, endless news. The more you reduce them, the more space you open for high-value ones.</span></div>
+        <div class="formula-var"><span class="var-name">V</span><span class="var-desc"><strong>Exposure Speed.</strong> The frequency with which the system throws stimuli at you. Reducing V — fewer sessions, shorter ones — reduces the product E×V that subtracts from your recovery.</span></div>
       </div>
     </div>
-
-    <div class="question-block" role="group" aria-labelledby="q5-text">
-      <div class="question-text" id="q5-text">"What is the most powerful variable you can change today?"</div>
-      <div class="options" role="radiogroup" aria-labelledby="q5-text">
-        <button class="option" onclick="selectOption(this,false,'q5')" data-opt-id="q5-0">E — eliminate all social media apps</button>
-        <button class="option" onclick="selectOption(this,true,'q5')" data-opt-id="q5-1">C — understanding the mechanism, because it multiplies the effect of all other actions</button>
-        <button class="option" onclick="selectOption(this,false,'q5')" data-opt-id="q5-2">V — never look at your phone</button>
+    <div class="question-block">
+      <div class="question-text">"What is the most powerful variable you can change today?"</div>
+      <div class="options">
+        <button class="option" onclick="selectOption(this, false, 'q5')">E — eliminate all social media apps</button>
+        <button class="option" onclick="selectOption(this, true, 'q5')">C — understanding the mechanism, because it multiplies the effect of all other actions</button>
+        <button class="option" onclick="selectOption(this, false, 'q5')">V — never look at your phone</button>
       </div>
-      <div class="answer-reveal" id="q5-reveal" role="alert" aria-live="polite">
-        C is the multiplier variable. You can add friction without understanding why, and the system will defeat you as soon as you lower your guard. But when you understand the mechanism — when you know exactly what the app is doing to your dopamine and why — every friction action you add becomes intentional and sustainable. <strong>Awareness alone doesn't protect you. But without it, no other protection lasts.</strong>
-      </div>
+      <div class="answer-reveal" id="q5-reveal">C is the multiplier variable. You can add friction without understanding why, and the system will defeat you as soon as you lower your guard. But when you understand the mechanism — when you know exactly what the app is doing to your dopamine and why — every friction action you add becomes intentional and sustainable. <strong>Awareness alone doesn't protect you. But without it, no other protection lasts.</strong></div>
     </div>
-
     <a href="#s6" class="btn">The 30 Days →</a>
   </div>
 </section>
 
-<!-- ======================== 30 DAYS ======================== -->
-<section id="s6" aria-labelledby="s6-heading">
+<!-- ========== CALENDAR + SELF-ASSESSMENT ========== -->
+<section id="s6">
   <div class="section-inner">
-
-    <button class="section-read-btn" onclick="readSection('s6')" aria-label="Read this section aloud">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      Listen
-    </button>
-
-    <div class="phase-num" aria-hidden="true">The Calendar</div>
-    <h2 id="s6-heading">30 days to<br>recalibrate the <em>system.</em></h2>
-    <p class="phase-intro">
-      The brain needs between 14 and 30 days of reduced stimulation for dopamine receptors to return to baseline levels. Mark each day. The initial feeling of emptiness is the sign that it's working.
-    </p>
+    <div class="phase-num">The Calendar</div>
+    <h2>30 days to<br>recalibrate the <em>system.</em></h2>
+    <p class="phase-intro">The brain needs between 14 and 30 days of reduced stimulation for dopamine receptors to return to baseline levels. Mark each day. The initial feeling of emptiness is the sign that it's working.</p>
 
     <div class="days-tracker">
-      <div class="days-label" id="days-instructions">Mark each completed day — Click or press Enter to record</div>
-      <div class="days-grid" id="daysGrid" role="group" aria-label="30-day tracking grid" aria-describedby="days-instructions"></div>
-      <div class="milestone-label" id="milestone7" role="status">⟶ Day 7: First friction habits are installed.</div>
-      <div class="milestone-label" id="milestone14" role="status">⟶ Day 14: Dopamine receptors begin to emerge. The emptiness decreases.</div>
-      <div class="milestone-label" id="milestone30" role="status">⟶ Day 30: Baseline recalibrated. What you used to need to feel satisfaction, you now find in less.</div>
+      <div class="days-label">Mark each completed day — Click to record</div>
+      <div class="days-grid" id="daysGrid"></div>
+      <div class="milestone-label" id="milestone7">⟶ Day 7: First friction habits are installed.</div>
+      <div class="milestone-label" id="milestone14">⟶ Day 14: Dopamine receptors begin to emerge. The emptiness decreases.</div>
+      <div class="milestone-label" id="milestone30">⟶ Day 30: Baseline recalibrated. What you used to need to feel satisfaction, you now find in less.</div>
     </div>
 
-    <div class="score-display" id="scoreDisplay" role="status" aria-live="polite" aria-atomic="true">
+    <div class="score-display" id="scoreDisplay">
       <div class="score-num" id="scoreNum">0</div>
       <div class="score-label">Days completed</div>
       <div class="score-text" id="scoreText">Start today. Not tomorrow.</div>
     </div>
 
-    <div class="divider" aria-hidden="true"></div>
-
-    <div class="quote" role="blockquote">
-      <p>"It's not about using less technology. It's about you using it — not it using you."</p>
+    <!-- SELF-ASSESSMENT (no canvas) -->
+    <div class="self-assessment" id="selfAssessment">
+      <button class="btn btn-ghost" id="openAssessmentBtn" style="margin-top: 1rem;">📊 Evaluate my autonomy</button>
+      <div id="assessmentModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; overflow: auto; padding: 2rem;">
+        <div style="max-width: 600px; margin: 2rem auto; background: var(--white); padding: 2rem; border-radius: 12px;">
+          <h3 style="font-family: 'DM Serif Display', serif;">Self-Assessment: Your Attention Autonomy</h3>
+          <p>Answer honestly (1 = strongly disagree, 5 = strongly agree). Save results before starting the protocol and again after 14+ days to see your progress.</p>
+          <form id="assessmentForm">
+            <div id="questionsContainer"></div>
+            <div style="margin: 1.5rem 0;">
+              <label><input type="radio" name="assessmentType" value="pre" checked> Before the protocol (pre)</label><br>
+              <label><input type="radio" name="assessmentType" value="post"> After using the protocol (post)</label>
+            </div>
+            <button type="submit" class="btn" style="margin-right: 1rem;">Save assessment</button>
+            <button type="button" id="closeAssessmentBtn" class="btn-ghost">Cancel</button>
+          </form>
+          <div id="assessmentResults" style="margin-top: 2rem; display: none;">
+            <h4>Your progress</h4>
+            <div id="resultsText"></div>
+            <button id="exportResultsBtn" class="btn-ghost" style="margin-top: 1rem;">📁 Export results (JSON)</button>
+            <button id="clearResultsBtn" class="btn-ghost" style="margin-top: 1rem; margin-left: 0.5rem;">🗑️ Delete all results</button>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <div class="divider"></div>
+    <div class="quote"><p>"It's not about using less technology. It's about you using it — not it using you."</p></div>
     <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:2rem;">
-      <button class="btn btn-ghost" onclick="resetDays()" aria-label="Reset the 30-day calendar">Reset calendar</button>
+      <button class="btn btn-ghost" onclick="resetDays()">Reset calendar</button>
       <a href="#s0" class="btn">Back to top ↑</a>
     </div>
-
-    <!-- FOOTER -->
-    <div style="text-align:center; padding:2rem 1rem 1rem; font-size:0.7rem; font-family:'DM Mono',monospace; color:var(--muted); border-top:1px solid var(--border); margin-top:2rem;" role="contentinfo">
-      © 2026 Jose Ranero García ·
-      <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:none;">CC BY 4.0</a> ·
-      DOI: <a href="https://doi.org/10.5281/zenodo.19554967" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:none;">10.5281/zenodo.19554967</a> ·
-      ORCID: 0009-0009-3168-6379
+    <div style="text-align: center; padding: 2rem 1rem 1rem; font-size: 0.7rem; font-family: 'DM Mono', monospace; color: var(--muted); border-top: 1px solid var(--border); margin-top: 2rem;">
+      © 2026 Jose Ranero García · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" style="color: var(--muted); text-decoration: none;">CC BY 4.0</a> · DOI: <a href="https://doi.org/10.5281/zenodo.19556754" style="color: var(--muted); text-decoration: none;">10.5281/zenodo.19556754</a> · ORCID: 0009-0009-3168-6379
     </div>
-
   </div>
 </section>
 
-</main>
-
 <script>
-/* ============================================================
-   STORAGE KEY
-============================================================ */
-const STORE_KEY = 'protocolo_v1';
-
-function loadState() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
-}
-function saveState(s) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch {}
-}
-
-/* ============================================================
-   SR LIVE ANNOUNCE
-============================================================ */
-function announce(msg) {
-  const el = document.getElementById('sr-live');
-  el.textContent = '';
-  // timeout so repeat announcements re-trigger
-  setTimeout(() => { el.textContent = msg; }, 50);
-}
-
-/* ============================================================
-   PROGRESS BAR (rAF throttled)
-============================================================ */
+// ========== PROGRESS BAR ==========
 let ticking = false;
 window.addEventListener('scroll', () => {
   if (!ticking) {
     requestAnimationFrame(() => {
       const scrollTop = window.scrollY;
-      const docH = document.body.scrollHeight - window.innerHeight;
-      const pct = docH > 0 ? Math.round((scrollTop / docH) * 100) : 0;
-      const bar = document.getElementById('progressBar');
-      bar.style.width = pct + '%';
-      bar.setAttribute('aria-valuenow', pct);
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
       ticking = false;
     });
     ticking = true;
   }
 });
 
-/* ============================================================
-   SCROLL & NAV DOTS
-============================================================ */
+// ========== SCROLL TO SECTION & NAV ==========
 const sections = ['s0','s1','s2','s3','s4','s5','s6'];
-
 function scrollToSection(i) {
   document.getElementById(sections[i]).scrollIntoView({ behavior: 'smooth' });
 }
-
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelector('.section-inner').classList.add('visible');
+      const idx = sections.indexOf(entry.target.id);
+      if (idx !== -1) updateNav(idx);
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) observer.observe(el);
+});
 function updateNav(activeIdx) {
   document.querySelectorAll('.nav-dot').forEach((dot, i) => {
-    dot.classList.remove('active','done');
+    dot.classList.remove('active', 'done');
     if (i === activeIdx) dot.classList.add('active');
     else if (i < activeIdx) dot.classList.add('done');
   });
 }
 
-/* Intersection observer for animation + nav */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const inner = entry.target.querySelector('.section-inner');
-      if (inner) inner.classList.add('visible');
-      const idx = sections.indexOf(entry.target.id);
-      if (idx !== -1) updateNav(idx);
-    }
-  });
-}, { threshold: 0.25 });
-
-sections.forEach(id => {
-  const el = document.getElementById(id);
-  if (el) observer.observe(el);
-});
-
-/* ============================================================
-   STEPS (with localStorage)
-============================================================ */
-function toggleStep(el) {
-  const stepId = el.dataset.stepId;
-  const isChecked = el.classList.toggle('checked');
-  el.setAttribute('aria-checked', isChecked ? 'true' : 'false');
-
-  if (stepId) {
-    const s = loadState();
-    if (!s.steps) s.steps = {};
-    s.steps[stepId] = isChecked;
-    saveState(s);
-  }
-  announce(isChecked ? 'Step marked as complete.' : 'Step unmarked.');
+// ========== STEPS (persistence) ==========
+function toggleStep(stepElement) {
+  stepElement.classList.toggle('checked');
+  saveSteps();
 }
-
-function stepKeydown(e, el) {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    toggleStep(el);
+function saveSteps() {
+  const stepsState = [];
+  document.querySelectorAll('.step').forEach(step => {
+    stepsState.push(step.classList.contains('checked'));
+  });
+  localStorage.setItem('protocolo_steps_v2_en', JSON.stringify(stepsState));
+}
+function loadSteps() {
+  const saved = localStorage.getItem('protocolo_steps_v2_en');
+  if (saved) {
+    const stepsState = JSON.parse(saved);
+    document.querySelectorAll('.step').forEach((step, idx) => {
+      if (stepsState[idx]) step.classList.add('checked');
+    });
   }
 }
 
-function restoreSteps() {
-  const s = loadState();
-  if (!s.steps) return;
-  document.querySelectorAll('.step[data-step-id]').forEach(el => {
-    const id = el.dataset.stepId;
-    if (s.steps[id]) {
-      el.classList.add('checked');
-      el.setAttribute('aria-checked', 'true');
-    }
-  });
-}
-
-/* ============================================================
-   OPTIONS (with localStorage)
-============================================================ */
+// ========== QUESTIONS (persistence) ==========
 function selectOption(btn, isCorrect, questionId) {
   const parent = btn.closest('.options');
-  parent.querySelectorAll('.option').forEach(o => {
-    o.classList.remove('selected','correct');
-    o.removeAttribute('aria-pressed');
-  });
+  parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected','correct'));
   btn.classList.add(isCorrect ? 'correct' : 'selected');
-  btn.setAttribute('aria-pressed', 'true');
-
   const reveal = document.getElementById(questionId + '-reveal');
   if (reveal) reveal.classList.add('show');
-
-  // persist
-  const optId = btn.dataset.optId;
-  if (optId) {
-    const s = loadState();
-    if (!s.answers) s.answers = {};
-    s.answers[questionId] = optId;
-    saveState(s);
-  }
-
-  announce(isCorrect ? 'Correct! Explanation revealed.' : 'Answer selected. Explanation revealed.');
+  const selectedValue = Array.from(parent.querySelectorAll('.option')).indexOf(btn);
+  saveAnswer(questionId, selectedValue);
 }
-
-function restoreAnswers() {
-  const s = loadState();
-  if (!s.answers) return;
-  Object.entries(s.answers).forEach(([qId, optId]) => {
-    const btn = document.querySelector(`[data-opt-id="${optId}"]`);
-    if (!btn) return;
-    const isCorrect = btn.classList.contains('option') &&
-      btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('true');
-    btn.classList.add(isCorrect ? 'correct' : 'selected');
-    btn.setAttribute('aria-pressed', 'true');
-    const reveal = document.getElementById(qId + '-reveal');
-    if (reveal) reveal.classList.add('show');
-  });
+function saveAnswer(questionId, selectedIndex) {
+  const answers = JSON.parse(localStorage.getItem('protocolo_answers_v2_en') || '{}');
+  answers[questionId] = selectedIndex;
+  localStorage.setItem('protocolo_answers_v2_en', JSON.stringify(answers));
 }
-
-/* ============================================================
-   DAYS GRID (with localStorage)
-============================================================ */
-const DAYS_KEY_LEGACY = 'protocolo_days_v1';
-
-function loadDays() {
-  const s = loadState();
-  // also support legacy key migration
-  if (!s.days) {
-    try {
-      const legacy = JSON.parse(localStorage.getItem(DAYS_KEY_LEGACY));
-      if (Array.isArray(legacy) && legacy.length) {
-        s.days = legacy;
-        saveState(s);
-        localStorage.removeItem(DAYS_KEY_LEGACY);
+function loadAnswers() {
+  const answers = JSON.parse(localStorage.getItem('protocolo_answers_v2_en') || '{}');
+  for (const [qId, idx] of Object.entries(answers)) {
+    const questionDiv = document.getElementById(qId + '-reveal')?.closest('.question-block');
+    if (questionDiv) {
+      const options = questionDiv.querySelectorAll('.option');
+      if (options[idx]) {
+        const isCorrect = options[idx].getAttribute('onclick')?.includes('true');
+        selectOption(options[idx], isCorrect, qId);
       }
-    } catch {}
+    }
   }
-  return Array.isArray(s.days) ? s.days : [];
 }
 
+// ========== CALENDAR ==========
+const STORAGE_KEY = 'protocolo_days_v2_en';
+function loadDays() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch { return []; }
+}
 function saveDays(days) {
-  const s = loadState();
-  s.days = days;
-  saveState(s);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(days));
 }
-
 function buildGrid() {
   const grid = document.getElementById('daysGrid');
   const marked = loadDays();
   grid.innerHTML = '';
   for (let i = 1; i <= 30; i++) {
-    const cell = document.createElement('button');
-    const isMilestone = (i === 7 || i === 14 || i === 30);
-    cell.className = 'day-cell' + (isMilestone ? ' milestone' : '');
+    const cell = document.createElement('div');
+    cell.className = 'day-cell' + (i === 7 || i === 14 || i === 30 ? ' milestone' : '');
     if (marked.includes(i)) cell.classList.add('marked');
     cell.textContent = i;
-    cell.setAttribute('tabindex', '0');
-    cell.setAttribute('aria-label', `Day ${i}${isMilestone ? ' (milestone)' : ''}${marked.includes(i) ? ', completed' : ''}`);
-    cell.setAttribute('aria-pressed', marked.includes(i) ? 'true' : 'false');
-    cell.setAttribute('type', 'button');
     cell.onclick = () => toggleDay(i);
     grid.appendChild(cell);
   }
   updateScore(marked);
 }
-
 function toggleDay(day) {
   let marked = loadDays();
-  if (marked.includes(day)) {
-    marked = marked.filter(d => d !== day);
-    announce(`Day ${day} unmarked.`);
-  } else {
-    marked.push(day);
-    announce(`Day ${day} marked as completed.`);
-  }
+  if (marked.includes(day)) marked = marked.filter(d => d !== day);
+  else marked.push(day);
   saveDays(marked);
   buildGrid();
 }
-
 function resetDays() {
   if (confirm('Reset the 30-day calendar?')) {
     saveDays([]);
     buildGrid();
-    announce('Calendar reset.');
   }
 }
-
 function updateScore(marked) {
   const count = marked.length;
   document.getElementById('scoreNum').textContent = count;
-
-  const texts = {
-    0: 'Start today. Not tomorrow.',
-    1: 'The first day is the most important.',
-    7: 'One week. First habits are being installed.',
-    14: 'Fourteen days. Receptors are emerging.',
-    30: 'Thirty days. System recalibrated.'
-  };
   let text = 'Every day adds up. Keep going.';
-  if (count === 0) text = texts[0];
-  else if (count === 1) text = texts[1];
-  else if (count >= 30) text = texts[30];
-  else if (count >= 14) text = texts[14];
-  else if (count >= 7) text = texts[7];
+  if (count === 0) text = 'Start today. Not tomorrow.';
+  else if (count === 1) text = 'The first day is the most important.';
+  else if (count >= 30) text = 'Thirty days. System recalibrated.';
+  else if (count >= 14) text = 'Fourteen days. Receptors are emerging.';
+  else if (count >= 7) text = 'One week. First habits are being installed.';
   document.getElementById('scoreText').textContent = text;
-
   ['milestone7','milestone14','milestone30'].forEach(id => {
     document.getElementById(id).classList.remove('show');
   });
-  if (marked.includes(7))  document.getElementById('milestone7').classList.add('show');
+  if (marked.includes(7)) document.getElementById('milestone7').classList.add('show');
   if (marked.includes(14)) document.getElementById('milestone14').classList.add('show');
   if (marked.includes(30)) document.getElementById('milestone30').classList.add('show');
 }
 
-/* ============================================================
-   VOICE / SPEECH (Web Speech API)
-============================================================ */
-const synth = window.speechSynthesis;
-let currentReadBtn = null;
-
-// Section text extractor — pulls readable text from a section
-function extractSectionText(sectionId) {
-  const el = document.getElementById(sectionId);
-  if (!el) return '';
-  // Clone to manipulate without affecting the page
-  const clone = el.cloneNode(true);
-  // Remove read buttons, nav, aria-hidden elements
-  clone.querySelectorAll('.section-read-btn, [aria-hidden="true"]').forEach(n => n.remove());
-  // Get text, collapse whitespace
-  return clone.innerText.replace(/\s+/g, ' ').trim();
+// ========== SELF-ASSESSMENT (no canvas, English) ==========
+const ASSESSMENT_KEY = 'protocolo_assessment_en_v2';
+const questions = [
+  "I can leave my phone aside for an hour without feeling anxious.",
+  "When I open an app, I usually have a clear task in mind.",
+  "Boredom doesn't immediately push me to grab my phone.",
+  "I am aware when a notification tries to hijack my attention.",
+  "Overall, I feel I control my phone use, not the other way around."
+];
+function loadAssessment() {
+  try { return JSON.parse(localStorage.getItem(ASSESSMENT_KEY)) || {}; } catch { return {}; }
 }
-
-function stopSpeech() {
-  synth.cancel();
-  document.querySelectorAll('.section-read-btn').forEach(b => b.classList.remove('speaking'));
-  document.getElementById('globalStopBtn').style.display = 'none';
-  if (currentReadBtn) { currentReadBtn.classList.remove('speaking'); currentReadBtn = null; }
-  announce('Reading stopped.');
+function saveAssessment(data) { localStorage.setItem(ASSESSMENT_KEY, JSON.stringify(data)); }
+function renderQuestions() {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question-item';
+    div.innerHTML = `
+      <div class="question-text">${idx+1}. ${q}</div>
+      <div class="likert" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: space-between;">
+        ${[1,2,3,4,5].map(val => `<label style="display: flex; flex-direction: column; align-items: center; font-size: 0.7rem;"><input type="radio" name="q${idx}" value="${val}" required><span>${val}</span></label>`).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
 }
-
-function readSection(sectionId) {
-  if (!synth) {
-    announce('Text-to-speech is not supported in your browser.');
-    return;
+function populateForm(type) {
+  const stored = loadAssessment();
+  const answers = stored[type] || [];
+  for (let i = 0; i < questions.length; i++) {
+    const val = answers[i];
+    if (val) {
+      const radio = document.querySelector(`input[name="q${i}"][value="${val}"]`);
+      if (radio) radio.checked = true;
+    }
   }
-
-  // Find the button for this section
-  const section = document.getElementById(sectionId);
-  const btn = section ? section.querySelector('.section-read-btn') : null;
-
-  // If already speaking this section, stop
-  if (btn && btn.classList.contains('speaking')) {
-    stopSpeech();
-    return;
-  }
-
-  // Stop any current speech
-  stopSpeech();
-
-  const text = extractSectionText(sectionId);
-  if (!text) return;
-
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'en-US';
-  utter.rate = 0.92;
-  utter.pitch = 1;
-
-  utter.onstart = () => {
-    if (btn) { btn.classList.add('speaking'); currentReadBtn = btn; }
-    document.getElementById('globalStopBtn').style.display = 'inline-flex';
-    announce('Reading aloud. Press Listen again or Stop to end.');
-  };
-  utter.onend = utter.onerror = () => {
-    if (btn) btn.classList.remove('speaking');
-    document.getElementById('globalStopBtn').style.display = 'none';
-    currentReadBtn = null;
-  };
-
-  synth.speak(utter);
 }
-
-/* ============================================================
-   INIT
-============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  buildGrid();
-  restoreSteps();
-  restoreAnswers();
-
-  // Hide speech buttons if not supported
-  if (!window.speechSynthesis) {
-    document.querySelectorAll('.section-read-btn').forEach(b => b.style.display = 'none');
+function showResults(pre, post) {
+  const resultsDiv = document.getElementById('assessmentResults');
+  const resultsTextDiv = document.getElementById('resultsText');
+  resultsTextDiv.innerHTML = '';
+  const maxScore = 5 * questions.length;
+  const preSum = pre.reduce((a,b) => a+b, 0);
+  const postSum = post.reduce((a,b) => a+b, 0);
+  const prePercent = (preSum / maxScore) * 100;
+  const postPercent = (postSum / maxScore) * 100;
+  const improvement = postSum - preSum;
+  const summary = document.createElement('div');
+  summary.innerHTML = `<p><strong>Total score:</strong> ${preSum} / ${maxScore} (${Math.round(prePercent)}%) → ${postSum} / ${maxScore} (${Math.round(postPercent)}%)</p><p><strong>Improvement:</strong> ${improvement > 0 ? '+' : ''}${improvement} points (${Math.round(postPercent - prePercent)}%)</p><div class="progress-bar-simple"><div class="progress-fill" style="width: ${prePercent}%; background: var(--accent2);"></div></div><div class="progress-bar-simple"><div class="progress-fill" style="width: ${postPercent}%; background: var(--accent);"></div></div><p style="font-size:0.75rem; color:var(--muted);">Top bar = pre, bottom bar = post</p>`;
+  resultsTextDiv.appendChild(summary);
+  const detailTitle = document.createElement('p');
+  detailTitle.innerHTML = '<strong>Progress per question:</strong>';
+  resultsTextDiv.appendChild(detailTitle);
+  for (let i = 0; i < questions.length; i++) {
+    const preVal = pre[i];
+    const postVal = post[i];
+    const diff = postVal - preVal;
+    const diffText = diff > 0 ? `+${diff}` : diff === 0 ? '=' : `${diff}`;
+    const diffColor = diff > 0 ? 'var(--accent)' : diff < 0 ? 'var(--accent2)' : 'var(--muted)';
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'result-item';
+    itemDiv.innerHTML = `<div><strong>${i+1}. ${questions[i]}</strong></div><div class="result-stats"><span>Pre: ${preVal}</span><span>Post: ${postVal}</span><span style="color:${diffColor}">${diffText}</span></div><div class="progress-bar-simple"><div class="progress-fill" style="width: ${(preVal/5)*100}%; background: var(--accent2);"></div></div><div class="progress-bar-simple"><div class="progress-fill" style="width: ${(postVal/5)*100}%; background: var(--accent);"></div></div>`;
+    resultsTextDiv.appendChild(itemDiv);
+  }
+  resultsDiv.style.display = 'block';
+}
+document.getElementById('openAssessmentBtn')?.addEventListener('click', () => {
+  renderQuestions();
+  const modal = document.getElementById('assessmentModal');
+  const resultsDiv = document.getElementById('assessmentResults');
+  resultsDiv.style.display = 'none';
+  modal.style.display = 'block';
+  document.querySelector('input[value="pre"]').checked = true;
+  populateForm('pre');
+});
+document.getElementById('closeAssessmentBtn')?.addEventListener('click', () => {
+  document.getElementById('assessmentModal').style.display = 'none';
+});
+document.getElementById('assessmentForm')?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const type = document.querySelector('input[name="assessmentType"]:checked').value;
+  const answers = [];
+  for (let i = 0; i < questions.length; i++) {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if (!selected) { alert(`Please answer question ${i+1}`); return; }
+    answers.push(parseInt(selected.value));
+  }
+  const stored = loadAssessment();
+  stored[type] = answers;
+  saveAssessment(stored);
+  alert(`Assessment (${type === 'pre' ? 'before' : 'after'}) saved.`);
+  if (stored.pre && stored.post) showResults(stored.pre, stored.post);
+  else document.getElementById('assessmentModal').style.display = 'none';
+});
+document.getElementById('exportResultsBtn')?.addEventListener('click', () => {
+  const data = loadAssessment();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'attention_assessment.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('clearResultsBtn')?.addEventListener('click', () => {
+  if (confirm('Delete all assessment results? This cannot be undone.')) {
+    localStorage.removeItem(ASSESSMENT_KEY);
+    document.getElementById('assessmentResults').style.display = 'none';
+    alert('Results deleted.');
   }
 });
+
+// ========== INITIALIZATION ==========
+loadSteps();
+loadAnswers();
+buildGrid();
 </script>
 </body>
 </html>
